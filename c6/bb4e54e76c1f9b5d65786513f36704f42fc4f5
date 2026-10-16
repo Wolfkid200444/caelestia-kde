@@ -1,0 +1,55 @@
+tests/test_color.sh
+  s_d480d58d9dc596::t_055ac2d93583ae 286-312
+shell/utils/scripts/skwd-wall.js
+  s_d480d58d9dc596::t_71ff37701cefdf 1-26
+shell/services/SkwdWall.qml
+  s_d480d58d9dc596::t_c57dc9a2ecd0e2 68,85
+  s_d480d58d9dc596::t_71ff37701cefdf 1-54,56-64,66-67,69-71,76-81,83-84,86-129
+  s_d480d58d9dc596::t_931ebecf713990 55,65,72-75,82
+shell/modules/background/Background.qml
+  s_d480d58d9dc596::t_71ff37701cefdf 34,89
+  s_d480d58d9dc596::t_c57dc9a2ecd0e2 69-78
+src/bin/caelestia-color
+  s_d480d58d9dc596::t_c57dc9a2ecd0e2 1621-1624
+  s_d480d58d9dc596::t_71ff37701cefdf 1254-1257,1276
+shell/services/Wallpapers.qml
+  s_d480d58d9dc596::t_eb463ec6d03b7e 43-50
+  s_d480d58d9dc596::t_71ff37701cefdf 27-42,51-67,71,73,75,77,116,153-158,178,205-206,226,268,312-316,319-332
+shell/modules/background/Wallpaper.qml
+  s_d480d58d9dc596::t_eb463ec6d03b7e 18
+shell/modules/nexus/pages/wallandstyle/WallpaperCategory.qml
+  s_d480d58d9dc596::t_71ff37701cefdf 20,22,28
+tests/test_skwd_wall_service.sh
+  s_d480d58d9dc596::t_c57dc9a2ecd0e2 56,101-103,108-112
+  s_d480d58d9dc596::t_e12db144185730 1-14,17-55,57-100,104-107,113-128
+  s_d480d58d9dc596::t_1fa0ebf3114ab1 15-16
+shell/modules/nexus/pages/wallandstyle/WallpaperSelect.qml
+  s_d480d58d9dc596::t_71ff37701cefdf 45,47,54,418-423,442-448
+tests/test_skwd_wall_picker.sh
+  s_d480d58d9dc596::t_055ac2d93583ae 5,11-15,20,23-32
+  s_d480d58d9dc596::t_cdfbc6bb416ad3 1-4,6-10,16-19,21-22,33-34
+shell/modules/nexus/common/WallItem.qml
+  s_d480d58d9dc596::t_71ff37701cefdf 21
+shell/modules/launcher/items/WallpaperItem.qml
+  s_d480d58d9dc596::t_71ff37701cefdf 14,70,78,83
+shell/services/Colours.qml
+  s_d480d58d9dc596::t_71ff37701cefdf 405
+docs/skwd-wall-picker.md
+  s_d480d58d9dc596::t_90d92ee716d94d 1-44
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c6bb4e54e76c1f9b5d65786513f36704f42fc4f5",
+  "prompts": {},
+  "sessions": {
+    "s_d480d58d9dc596": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1459a-b773-7b91-ba0d-1bc5711ed52c",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Wolfkid200444 <32025746+Wolfkid200444@users.noreply.github.com>"
+    }
+  }
+}
