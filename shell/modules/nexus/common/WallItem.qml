@@ -18,7 +18,7 @@ Item {
     // while it is being extracted, the spinner is honest rather than permanent.
     property string source
     readonly property bool isVideo: Images.isVideo(String(source).replace(/^file:\/\//, ""))
-    readonly property string displaySource: root.isVideo ? Wallpapers.thumbFor(source) : source
+    readonly property string displaySource: Wallpapers.thumbFor(source)
     property alias text: label.text
     property alias radius: imgWrapper.radius
     property alias imgHeight: imgWrapper.implicitHeight

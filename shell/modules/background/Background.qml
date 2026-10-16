@@ -31,7 +31,7 @@ Variants {
         screen: modelData
         name: "background"
         isDesktopWidget: true
-        color: (Config.background.wallpaperEnabled && wallpaperHasBeenUp && !ContextMenuStore.editMode) ? "black" : "transparent"
+        color: (Config.background.wallpaperEnabled && !Wallpapers.externalOn(win.modelData.name) && wallpaperHasBeenUp && !ContextMenuStore.editMode) ? "black" : "transparent"
         surfaceFormat.opaque: false
         mask: (!Config.background.disableQuickshellDesktop && !ContextMenuStore.editMode) ? null : emptyRegion
         anchors.top: true
@@ -66,6 +66,15 @@ Variants {
                 }
             }
         }
+        Timer {
+            interval: Math.max(1, Math.round(Config.background.slideshowInterval * 60)) * 60 * 1000
+            running: Config.background.slideshowEnabled && Config.background.wallpaperEnabled && win.modelData.name === Quickshell.screens[0].name && !ContextMenuStore.editMode
+            repeat: true
+            onTriggered: {
+                if (Config.background.slideshowRandom) Wallpapers.setRandom();
+                else Wallpapers.setNextSequential();
+            }
+        }
         Item {
             id: behindClock
 
@@ -76,7 +85,7 @@ Variants {
 
                 asynchronous: true
                 anchors.fill: parent
-                active: Config.background.wallpaperEnabled && !ContextMenuStore.editMode
+                active: Config.background.wallpaperEnabled && !Wallpapers.externalOn(win.modelData.name) && !ContextMenuStore.editMode
                 visible: !ContextMenuStore.editMode
                 sourceComponent: Wallpaper {
                     screen: win.modelData

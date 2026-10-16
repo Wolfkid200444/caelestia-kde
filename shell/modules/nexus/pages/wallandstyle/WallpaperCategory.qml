@@ -17,14 +17,15 @@ PageBase {
         const filter = root.nState ? root.nState.wallpaperFilterType : "all";
 
         walls = walls.filter(w => {
-            const isVid = Images.isVideo(w.name);
+            const isVid = Wallpapers.mediaType(w) === "video";
             const isGif = w.name.toLowerCase().endsWith(".gif");
-            const isImg = Images.isValidImageByName(w.name) && !isGif;
+            const isImg = Wallpapers.mediaType(w) === "static" && !isGif;
 
             if (filter === "all") return true;
             if (filter === "video") return isVid;
             if (filter === "gif") return isGif;
             if (filter === "image") return isImg;
+            if (filter === "we") return Wallpapers.mediaType(w) === "we";
             return false;
         });
 

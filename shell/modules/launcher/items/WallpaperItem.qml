@@ -11,7 +11,7 @@ import qs.utils
 Item {
     id: root
 
-    required property FileSystemEntry modelData
+    required property var modelData
     required property DrawerVisibilities visibilities
 
     scale: 0.5
@@ -67,7 +67,7 @@ Item {
             text: "image"
             color: Colours.tPalette.m3onSurfaceVariant
             fontStyle: Tokens.font.icon.builders.extraLarge.scale(2).weight(Font.DemiBold).build()
-            visible: !Images.isVideo(root.modelData.name)
+            visible: Wallpapers.mediaType(root.modelData) === "static"
         }
 
         MaterialIcon {
@@ -75,12 +75,12 @@ Item {
             text: "videocam"
             color: Colours.tPalette.m3onSurfaceVariant
             fontStyle: Tokens.font.icon.builders.extraLarge.scale(2).weight(Font.DemiBold).build()
-            visible: Images.isVideo(root.modelData.name) && Wallpapers.thumbFor(root.modelData.path) === ""
+            visible: Wallpapers.mediaType(root.modelData) !== "static" && Wallpapers.thumbFor(root.modelData.path) === ""
         }
 
         CachingImage {
             anchors.fill: parent
-            path: Images.isVideo(root.modelData.name) ? Wallpapers.thumbFor(root.modelData.path) : root.modelData.path
+            path: Wallpapers.thumbFor(root.modelData.path)
             smooth: !root.PathView.view.moving
             visible: path !== ""
             sourceSize: {

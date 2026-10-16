@@ -24,16 +24,56 @@ Searcher {
     property var videoThumbs: ({})
     property var videoThumbsPending: ({})
 
+    property string storedWallpaper: ""
+    property bool storedWallpaperLoaded: false
+
+    function mediaType(w: var): string {
+        return w.mediaType || (Images.isVideo(w.name) ? "video" : Images.isAnimated(w.name) ? "animated" : "static");
+    }
+
+    function externalOn(screenName: string): bool {
+        return !previewing && SkwdWall.animatedOn(screenName);
+    }
+
+    function displayPath(path: string): string {
+        const entry = SkwdWall.entry(path);
+        return entry ? (entry.mediaType === "static" ? entry.mediaPath || entry.thumbnail : entry.thumbnail) : path.startsWith("skwd:") ? "" : path;
+    }
+
+    function backgroundPath(screenName: string): string {
+        if (!previewing) {
+            const output = SkwdWall.outputs.find(o => o.name === screenName && o.connected !== false);
+            if (output && output.type === "static" && output.path) return output.path;
+        }
+        return displayPath(current);
+    }
+
+    function restoreStoredWallpaper(): void {
+        if (!storedWallpaperLoaded || !SkwdWall.initialized || SkwdWall.applying) return;
+        if (SkwdWall.hasSelection) {
+            actualCurrent = SkwdWall.selected;
+            return;
+        }
+        if (storedWallpaper.startsWith("skwd:")) {
+            actualCurrent = storedWallpaper;
+            return;
+        }
+        actualCurrent = storedWallpaper || fallback;
+        if (!storedWallpaper)
+            Quickshell.execDetached(["caelestia", "wallpaper", "-f", fallback, ...Colours.smartArg]);
+        if (!Images.isVideo(actualCurrent)) syncPlasmaWallpaper(actualCurrent);
+    }
+
     property string currentMediaFilter: "All"
 
     property var filteredList: {
-        const res = wallpapers.entries || [];
+        const res = (wallpapers.entries || []).concat(SkwdWall.entries);
         if (currentMediaFilter === "Image") {
-            return res.filter(w => !Images.isVideo(w.relativePath) && !Images.isAnimated(w.relativePath));
+            return res.filter(w => mediaType(w) === "static");
         } else if (currentMediaFilter === "Video") {
-            return res.filter(w => Images.isVideo(w.relativePath));
+            return res.filter(w => mediaType(w) === "video");
         } else if (currentMediaFilter === "Animated") {
-            return res.filter(w => Images.isAnimated(w.relativePath));
+            return res.filter(w => ["animated", "we"].includes(mediaType(w)));
         }
         return res;
     }
@@ -72,7 +112,7 @@ Searcher {
         return grp;
     }
 
-    function getCategoryFor(w: FileSystemEntry): string {
+    function getCategoryFor(w: var): string {
         let category = w.parentDir.slice(Paths.wallsdir.length + 1);
         if (category.includes("/"))
             category = category.slice(0, category.indexOf("/"));
@@ -109,6 +149,12 @@ Searcher {
     }
 
     function setWallpaper(path: string): void {
+        if (SkwdWall.applying) return;
+        if (path.startsWith("skwd:") || (SkwdWall.available && Images.isVideo(path))) {
+            SkwdWall.apply(path);
+            return;
+        }
+
         if (previewing && path !== actualCurrent)
             previewColoursState.hold();
         actualCurrent = path;
@@ -128,7 +174,7 @@ Searcher {
     }
 
     function syncPlasmaWallpaper(imagePath: string): void {
-        if (!imagePath)
+        if (!imagePath || imagePath.startsWith("skwd:") || SkwdWall.animated)
             return;
         const script = 'var allDesktops = desktops();' +
             'for (var i = 0; i < allDesktops.length; i++) {' +
@@ -155,7 +201,8 @@ Searcher {
     function previewColourOf(path: string): void {
         if (Colours.scheme !== "dynamic")
             return;
-        previewColoursState.show(thumbFor(path));
+        const thumb = thumbFor(path);
+        if (thumb) previewColoursState.show(thumb);
     }
 
     function stopPreview(): void {
@@ -175,6 +222,7 @@ Searcher {
     }
 
     function thumbFor(path: string): string {
+        if (path.startsWith("skwd:")) return SkwdWall.entry(path)?.thumbnail || "";
         const p = String(path || "").replace(/^file:\/\//, "");
         if (p === "" || !Images.isVideo(p))
             return p;
@@ -216,7 +264,7 @@ Searcher {
             const m = root.videoThumbs;
             m[path] = out;
             root.videoThumbs = Object.assign({}, m);
-            if (path === root.actualCurrent) {
+            if (path === root.actualCurrent && !SkwdWall.animated) {
                 const script = 'caelestia wallpaper -f "$1" --apply-path "$2" ' + Colours.smartArg.join(" ") + '; printf "%s" "$2" > "$3"';
                 Quickshell.execDetached(["sh", "-c", script, "--", out, path, root.currentNamePath]);
                 syncPlasmaWallpaper(out);
@@ -260,22 +308,27 @@ Searcher {
         printErrors: false
         onFileChanged: reload()
         onLoaded: {
-            let wall = text().trim();
-            if (!wall) {
-                wall = root.fallback;
-                Quickshell.execDetached(["caelestia", "wallpaper", "-f", root.fallback, ...Colours.smartArg]);
-            }
-            if (Images.isVideo(root.actualCurrent) && wall === root.getThumbnailPath(root.actualCurrent)) {
-                return;
-            }
-            root.actualCurrent = wall;
-            if (!Images.isVideo(wall))
-                syncPlasmaWallpaper(wall);
+            const wall = text().trim();
+            if (Images.isVideo(root.actualCurrent) && wall === root.getThumbnailPath(root.actualCurrent)) return;
+            root.storedWallpaper = wall;
+            root.storedWallpaperLoaded = true;
+            root.restoreStoredWallpaper();
         }
         onLoadFailed: {
-            root.actualCurrent = root.fallback;
-            Quickshell.execDetached(["caelestia", "wallpaper", "-f", root.fallback, ...Colours.smartArg]);
-            syncPlasmaWallpaper(root.fallback);
+            root.storedWallpaperLoaded = true;
+            root.restoreStoredWallpaper();
+        }
+    }
+
+    Connections {
+        target: SkwdWall
+        function onInitializedChanged(): void { root.restoreStoredWallpaper(); }
+        function onSelectedChanged(): void {
+            if (SkwdWall.selected) root.actualCurrent = SkwdWall.selected;
+        }
+        function onApplied(path: string): void {
+            if (root.previewing) previewColoursState.hold();
+            root.actualCurrent = path;
         }
     }
 

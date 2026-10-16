@@ -1251,6 +1251,8 @@ _called_from_skwd_walld() {
 write_wallpaper_state() {
     local wallpaper="$1"
 
+    _called_from_skwd_walld && return 0
+
     # If a thumbnail was passed (e.g. from Quickshell video preview/thumb), resolve the original video
     if [[ "$wallpaper" == */first_frame.png ]]; then
         local dir source_video
@@ -1269,11 +1271,7 @@ write_wallpaper_state() {
     printf '%s' "$wallpaper" > "$WALLPAPER_FILE"
     ln -sfn "$wallpaper" "$WALLPAPER_LINK"
 
-    # Skip skwd-helm apply when we were already invoked by skwd-walld (its caelestia
-    # theme authority called us). Calling skwd-helm apply here would tell skwd-walld
-    # to apply the same wallpaper again, which triggers the theme authority again,
-    # creating an infinite loop. The wallpaper state is written above regardless.
-    if command -v skwd-helm >/dev/null 2>&1 && ! _called_from_skwd_walld; then
+    if command -v skwd-helm >/dev/null 2>&1; then
         skwd-helm apply "$wallpaper" >/dev/null 2>&1 || true
     fi
 }
@@ -1618,7 +1616,9 @@ cmd_wallpaper() {
             "${META_VARIANT:-tonalspot}" "$smart" "$smart"
     fi
 
-    run_wallpaper_hook "$state_file"
+    if ! _called_from_skwd_walld; then
+        run_wallpaper_hook "$state_file"
+    fi
 }
 
 pick_random_wallpaper() {

@@ -42,15 +42,16 @@ PageBase {
         const filter = root.nState ? root.nState.wallpaperFilterType : "all";
 
         for (const w of walls) {
-            const isVid = Images.isVideo(w.name);
+            const isVid = Wallpapers.mediaType(w) === "video";
             const isGif = w.name.toLowerCase().endsWith(".gif");
-            const isImg = Images.isValidImageByName(w.name) && !isGif;
+            const isImg = Wallpapers.mediaType(w) === "static" && !isGif;
 
             let matches = false;
             if (filter === "all") matches = true;
             else if (filter === "video" && isVid) matches = true;
             else if (filter === "gif" && isGif) matches = true;
             else if (filter === "image" && isImg) matches = true;
+            else if (filter === "we" && Wallpapers.mediaType(w) === "we") matches = true;
 
             if (!matches) continue;
 
@@ -415,6 +416,12 @@ PageBase {
                             }
                         },
                         MenuItem {
+                            property string filterValue: "we"
+                            text: qsTr("Wallpaper Engine")
+                            icon: "animation"
+                            onClicked: { if (root.nState) root.nState.wallpaperFilterType = "we"; }
+                        },
+                        MenuItem {
                             property string filterValue: "video"
 
                             text: qsTr("Videos")
@@ -432,6 +439,13 @@ PageBase {
                 }
             }
 
+            StyledText {
+                Layout.fillWidth: true
+                visible: SkwdWall.error !== ""
+                text: SkwdWall.error
+                color: Colours.palette.m3error
+                wrapMode: Text.Wrap
+            }
             StyledText {
                 Layout.topMargin: Tokens.spacing.large
                 text: qsTr("Local wallpapers")

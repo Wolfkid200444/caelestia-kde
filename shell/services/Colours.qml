@@ -402,7 +402,7 @@ Singleton {
     ImageAnalyser {
         id: analyser
 
-        source: Wallpapers.current
+        source: Wallpapers.thumbFor(Wallpapers.current)
         onLuminanceChanged: Qt.callLater(root.updatePaletteManager)
     }
 

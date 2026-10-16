@@ -283,6 +283,33 @@ test_wallpaper_writes_the_state_the_shell_watches() {
         "the source color is picked, not prompted for"
 }
 
+test_skwd_theme_thumbnail_preserves_selected_wallpaper() {
+    setup_sandbox
+    local image original
+    image="$(wallpaper_image thumbnail.png)"
+    original="$(wallpaper_image original.png)"
+    mkdir -p "$XDG_STATE_HOME/caelestia/wallpaper"
+    printf '%s' "$original" > "$XDG_STATE_HOME/caelestia/wallpaper/path.txt"
+    ln -s "$original" "$XDG_STATE_HOME/caelestia/wallpaper/current"
+    cat > "$STUB_DIR/ps" <<'STUB'
+#!/usr/bin/env bash
+case "$*" in
+    *ppid=*) printf '42\n' ;;
+    *comm=*) printf 'skwd-walld\n' ;;
+esac
+STUB
+    chmod +x "$STUB_DIR/ps"
+    run_color wallpaper -f "$image"
+    rm "$STUB_DIR/ps"
+    assert_status 0 "$STATUS" "skwd theme generation should succeed"
+    assert_eq "$original" "$(cat "$XDG_STATE_HOME/caelestia/wallpaper/path.txt")" \
+        "a palette thumbnail must not replace the selected wallpaper"
+    assert_eq "$original" "$(readlink "$XDG_STATE_HOME/caelestia/wallpaper/current")" \
+        "the wallpaper link must remain intact"
+    assert_file_exists "$XDG_STATE_HOME/caelestia/scheme.json"
+    assert_contains "$(cat "$CALLS")" "$image" "colours still come from the thumbnail"
+}
+
 test_the_roles_the_shell_reads_come_with_a_generated_scheme() {
     setup_sandbox
     local image
