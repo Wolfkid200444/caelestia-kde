@@ -1,0 +1,53 @@
+shell/services/Colours.qml
+  s_d480d58d9dc596::t_71ff37701cefdf 405
+tests/test_skwd_wall_picker.sh
+  s_d480d58d9dc596::t_055ac2d93583ae 5,11-15,20,23-32
+  s_d480d58d9dc596::t_cdfbc6bb416ad3 1-4,6-10,16-19,21-22,33-34
+shell/modules/nexus/pages/wallandstyle/WallpaperCategory.qml
+  s_d480d58d9dc596::t_71ff37701cefdf 20,22,28
+shell/modules/background/Background.qml
+  s_d480d58d9dc596::t_71ff37701cefdf 34,88
+  s_d480d58d9dc596::t_c57dc9a2ecd0e2 69-77
+shell/services/Wallpapers.qml
+  s_d480d58d9dc596::t_71ff37701cefdf 27-42,51-66,70,72,74,76,115,152-157,177,204-205,225,267,311-315,318-331
+  s_d480d58d9dc596::t_eb463ec6d03b7e 43-50
+shell/services/SkwdWall.qml
+  s_d480d58d9dc596::t_71ff37701cefdf 1-53,55-63,65-66,68-70,75-80,82-83,85-127
+  s_d480d58d9dc596::t_931ebecf713990 54,64,71-74,81
+  s_d480d58d9dc596::t_c57dc9a2ecd0e2 67,84
+shell/modules/nexus/common/WallItem.qml
+  s_d480d58d9dc596::t_71ff37701cefdf 21
+tests/test_skwd_wall_service.sh
+  s_d480d58d9dc596::t_c57dc9a2ecd0e2 54,98-100,105-109
+  s_d480d58d9dc596::t_1fa0ebf3114ab1 14-15
+  s_d480d58d9dc596::t_e12db144185730 1-13,16-53,55-97,101-104,110-125
+shell/modules/nexus/pages/wallandstyle/WallpaperSelect.qml
+  s_d480d58d9dc596::t_71ff37701cefdf 45,47,54,418-423,442-448
+tests/test_color.sh
+  s_d480d58d9dc596::t_055ac2d93583ae 286-312
+shell/utils/scripts/skwd-wall.js
+  s_d480d58d9dc596::t_71ff37701cefdf 1-25
+shell/modules/launcher/items/WallpaperItem.qml
+  s_d480d58d9dc596::t_71ff37701cefdf 14,70,78,83
+shell/modules/background/Wallpaper.qml
+  s_d480d58d9dc596::t_eb463ec6d03b7e 18
+src/bin/caelestia-color
+  s_d480d58d9dc596::t_c57dc9a2ecd0e2 1619-1621
+  s_d480d58d9dc596::t_71ff37701cefdf 1254-1255,1274
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b9a30ab99e533eb5ed2e29b69fdbd67cca7e9493",
+  "prompts": {},
+  "sessions": {
+    "s_d480d58d9dc596": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1459a-b773-7b91-ba0d-1bc5711ed52c",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": null
+    }
+  }
+}
